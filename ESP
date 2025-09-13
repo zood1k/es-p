@@ -5,10 +5,10 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 -- Создание окна Fluent
 local Window = Fluent:CreateWindow({
-    Title = "ESP Control GUI",
-    SubTitle = "by YourName",
+    Title = "ESP",
+    SubTitle = "by @zood3llotgk",
     TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
+    Size = UDim2.fromOffset(420, 330),
     Acrylic = true,
     Theme = "Dark",
     MinimizeKey = Enum.KeyCode.RightControl
@@ -144,7 +144,7 @@ end
 Players.PlayerAdded:Connect(onPlayer)
 
 -- GUI элементы
-local Section = Tabs.Main:AddSection("ESP Controls")
+local Section = Tabs.Main:AddSection("ESP")
 
 -- Переключатель для Name ESP
 Tabs.Main:AddToggle("EnableNameESP", {
