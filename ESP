@@ -2,207 +2,189 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-
--- Создание окна Fluent
-local Window = Fluent:CreateWindow({
-    Title = "ESP",
-    SubTitle = "by @zood3llotgk",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(420, 330),
-    Acrylic = true,
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.RightControl
-})
-
--- Добавление вкладок
-local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "rbxassetid://4483362458" })
-}
-
 -- Сервисы
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
-
+-- Создание окна Fluent
+local Window = Fluent:CreateWindow({
+Title = "ESP",
+SubTitle = "by @zood3llotgk",
+TabWidth = 160,
+Size = UDim2.fromOffset(420, 330),
+Acrylic = true,
+Theme = "Dark",
+MinimizeKey = Enum.KeyCode.Insert
+})
+-- Добавление вкладок
+local Tabs = {
+Main = Window:AddTab({ Title = "Main", Icon = "rbxassetid://4483362458" })
+}
 -- Переменные для управления ESP
 local nameESPEnabled = false
 local distanceESPEnabled = false
 local highlightESPEnabled = false
 local connections = {}
-
 -- Функция для создания Name ESP
 local function createNameESP(char, player)
-    if not char:FindFirstChild("Head") or char:FindFirstChild("NameESP") then return end
-    local billboard = Instance.new("BillboardGui")
-    billboard.Name = "NameESP"
-    billboard.Adornee = char.Head
-    billboard.AlwaysOnTop = true
-    billboard.Size = UDim2.new(0, 100, 0, 20)
-    billboard.StudsOffset = Vector3.new(0, 2, 0)
-    billboard.Parent = char
-
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 1, 0)
-    text.BackgroundTransparency = 1
-    text.TextColor3 = Color3.new(1, 1, 1)
-    text.TextStrokeTransparency = 0
-    text.Font = Enum.Font.SourceSansBold
-    text.TextScaled = true
-    text.TextSize = 12
-    text.Text = player.Name
-    text.Parent = billboard
+if not char:FindFirstChild("Head") or char:FindFirstChild("NameESP") then return end
+local billboard = Instance.new("BillboardGui")
+billboard.Name = "NameESP"
+billboard.Adornee = char.Head
+billboard.AlwaysOnTop = true
+billboard.Size = UDim2.new(0, 100, 0, 20)
+billboard.StudsOffset = Vector3.new(0, 2, 0)
+billboard.Parent = char
+local text = Instance.new("TextLabel")
+text.Size = UDim2.new(1, 0, 1, 0)
+text.BackgroundTransparency = 1
+text.TextColor3 = Color3.new(1, 1, 1)
+text.TextStrokeTransparency = 0
+text.Font = Enum.Font.SourceSansBold
+text.TextScaled = true
+text.TextSize = 12
+text.Text = player.Name
+text.Parent = billboard
 end
-
 -- Функция для создания Distance ESP
 local function createDistanceESP(char, player)
-    if not char:FindFirstChild("Head") or char:FindFirstChild("DistanceESP") then return end
-    local billboard = Instance.new("BillboardGui")
-    billboard.Name = "DistanceESP"
-    billboard.Adornee = char.Head
-    billboard.AlwaysOnTop = true
-    billboard.Size = UDim2.new(0, 100, 0, 20)
-    billboard.StudsOffset = Vector3.new(0, 3, 0)
-    billboard.Parent = char
-
-    local text = Instance.new("TextLabel")
-    text.Size = UDim2.new(1, 0, 1, 0)
-    text.BackgroundTransparency = 1
-    text.TextColor3 = Color3.new(1, 1, 1)
-    text.TextStrokeTransparency = 0
-    text.Font = Enum.Font.SourceSansBold
-    text.TextScaled = true
-    text.TextSize = 12
-    text.Parent = billboard
-
-    local connection = RunService.RenderStepped:Connect(function()
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("HumanoidRootPart") then
-            local dist = (LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
-            text.Text = tostring(math.floor(dist))
-        end
-    end)
-    table.insert(connections, {player = player, connection = connection, type = "DistanceESP"})
+if not char:FindFirstChild("Head") or char:FindFirstChild("DistanceESP") then return end
+local billboard = Instance.new("BillboardGui")
+billboard.Name = "DistanceESP"
+billboard.Adornee = char.Head
+billboard.AlwaysOnTop = true
+billboard.Size = UDim2.new(0, 100, 0, 20)
+billboard.StudsOffset = Vector3.new(0, 3, 0)
+billboard.Parent = char
+local text = Instance.new("TextLabel")
+text.Size = UDim2.new(1, 0, 1, 0)
+text.BackgroundTransparency = 1
+text.TextColor3 = Color3.new(1, 1, 1)
+text.TextStrokeTransparency = 0
+text.Font = Enum.Font.SourceSansBold
+text.TextScaled = true
+text.TextSize = 12
+text.Parent = billboard
+local connection = RunService.RenderStepped:Connect(function()
+if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("HumanoidRootPart") then
+local dist = (LocalPlayer.Character.HumanoidRootPart.Position - char.HumanoidRootPart.Position).Magnitude
+text.Text = tostring(math.floor(dist))
 end
-
+end)
+table.insert(connections, {player = player, connection = connection, type = "DistanceESP"})
+end
 -- Функция для создания Highlight ESP
 local function createHighlightESP(char)
-    if not char:FindFirstChild("ESP_Highlight") then
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "ESP_Highlight"
-        highlight.Adornee = char
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-        highlight.FillColor = Color3.fromRGB(255, 255, 255)
-        highlight.FillTransparency = 0.5
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-        highlight.OutlineTransparency = 0
-        highlight.Parent = char
-    end
+if not char:FindFirstChild("ESP_Highlight") then
+local highlight = Instance.new("Highlight")
+highlight.Name = "ESP_Highlight"
+highlight.Adornee = char
+highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+highlight.FillColor = Color3.fromRGB(255, 255, 255)
+highlight.FillTransparency = 0.5
+highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+highlight.OutlineTransparency = 0
+highlight.Parent = char
 end
-
+end
 -- Функция для обработки игрока
 local function onPlayer(player)
-    if player == LocalPlayer then return end
-    player.CharacterAdded:Connect(function(char)
-        if nameESPEnabled then createNameESP(char, player) end
-        if distanceESPEnabled then createDistanceESP(char, player) end
-        if highlightESPEnabled then createHighlightESP(char) end
-    end)
-    if player.Character then
-        if nameESPEnabled then createNameESP(player.Character, player) end
-        if distanceESPEnabled then createDistanceESP(player.Character, player) end
-        if highlightESPEnabled then createHighlightESP(player.Character) end
-    end
+if player == LocalPlayer then return end
+player.CharacterAdded:Connect(function(char)
+if nameESPEnabled then createNameESP(char, player) end
+if distanceESPEnabled then createDistanceESP(char, player) end
+if highlightESPEnabled then createHighlightESP(char) end
+end)
+if player.Character then
+if nameESPEnabled then createNameESP(player.Character, player) end
+if distanceESPEnabled then createDistanceESP(player.Character, player) end
+if highlightESPEnabled then createHighlightESP(player.Character) end
 end
-
+end
 -- Функция для очистки ESP
 local function clearESP(type)
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            local char = player.Character
-            if type == "NameESP" and char:FindFirstChild("NameESP") then
-                char.NameESP:Destroy()
-            elseif type == "DistanceESP" and char:FindFirstChild("DistanceESP") then
-                char.DistanceESP:Destroy()
-            elseif type == "HighlightESP" and char:FindFirstChild("ESP_Highlight") then
-                char.ESP_Highlight:Destroy()
-            end
-        end
-    end
-    if type == "DistanceESP" then
-        for i, conn in ipairs(connections) do
-            if conn.type == "DistanceESP" then
-                conn.connection:Disconnect()
-                table.remove(connections, i)
-            end
-        end
-    end
+for _, player in ipairs(Players:GetPlayers()) do
+if player ~= LocalPlayer and player.Character then
+local char = player.Character
+if type == "NameESP" and char:FindFirstChild("NameESP") then
+char.NameESP:Destroy()
+elseif type == "DistanceESP" and char:FindFirstChild("DistanceESP") then
+char.DistanceESP:Destroy()
+elseif type == "HighlightESP" and char:FindFirstChild("ESP_Highlight") then
+char.ESP_Highlight:Destroy()
 end
-
+end
+end
+if type == "DistanceESP" then
+for i, conn in ipairs(connections) do
+if conn.type == "DistanceESP" then
+conn.connection:Disconnect()
+table.remove(connections, i)
+end
+end
+end
+end
 -- Инициализация для текущих игроков
 for _, p in ipairs(Players:GetPlayers()) do
-    onPlayer(p)
+onPlayer(p)
 end
 Players.PlayerAdded:Connect(onPlayer)
-
 -- GUI элементы
 local Section = Tabs.Main:AddSection("ESP")
-
 -- Переключатель для Name ESP
 Tabs.Main:AddToggle("EnableNameESP", {
-    Title = "Enable Name ESP",
-    Description = "Show player names above heads",
-    Default = false,
-    Callback = function(value)
-        nameESPEnabled = value
-        if value then
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character then
-                    createNameESP(p.Character, p)
-                end
-            end
-        else
-            clearESP("NameESP")
-        end
-    end
+Title = "Enable Name ESP",
+Description = "Show player names above heads",
+Default = false,
+Callback = function(value)
+nameESPEnabled = value
+if value then
+for _, p in ipairs(Players:GetPlayers()) do
+if p ~= LocalPlayer and p.Character then
+createNameESP(p.Character, p)
+end
+end
+else
+clearESP("NameESP")
+end
+end
 })
-
 -- Переключатель для Distance ESP
 Tabs.Main:AddToggle("EnableDistanceESP", {
-    Title = "Enable Distance ESP",
-    Description = "Show distance to players",
-    Default = false,
-    Callback = function(value)
-        distanceESPEnabled = value
-        if value then
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character then
-                    createDistanceESP(p.Character, p)
-                end
-            end
-        else
-            clearESP("DistanceESP")
-        end
-    end
+Title = "Enable Distance ESP",
+Description = "Show distance to players",
+Default = false,
+Callback = function(value)
+distanceESPEnabled = value
+if value then
+for _, p in ipairs(Players:GetPlayers()) do
+if p ~= LocalPlayer and p.Character then
+createDistanceESP(p.Character, p)
+end
+end
+else
+clearESP("DistanceESP")
+end
+end
 })
-
 -- Переключатель для Highlight ESP
 Tabs.Main:AddToggle("EnableHighlightESP", {
-    Title = "Enable Highlight ESP",
-    Description = "Highlight player characters",
-    Default = false,
-    Callback = function(value)
-        highlightESPEnabled = value
-        if value then
-            for _, p in ipairs(Players:GetPlayers()) do
-                if p ~= LocalPlayer and p.Character then
-                    createHighlightESP(p.Character)
-                end
-            end
-        else
-            clearESP("HighlightESP")
-        end
-    end
+Title = "Enable Highlight ESP",
+Description = "Highlight player characters",
+Default = false,
+Callback = function(value)
+highlightESPEnabled = value
+if value then
+for _, p in ipairs(Players:GetPlayers()) do
+if p ~= LocalPlayer and p.Character then
+createHighlightESP(p.Character)
+end
+end
+else
+clearESP("HighlightESP")
+end
+end
 })
-
 -- Настройки сохранения
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
@@ -212,11 +194,4 @@ InterfaceManager:SetFolder("ESPControl")
 SaveManager:SetFolder("ESPControl")
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
-
 Window:SelectTab(1)
-
-Fluent:Notify({
-    Title = "ESP Control Loaded",
-    Content = "GUI loaded. Use toggles to enable/disable ESP features.",
-    Duration = 5
-})
